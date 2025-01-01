@@ -1,9 +1,13 @@
 'use client'
 
-import { CaretRight } from '@phosphor-icons/react'
 import Link from 'next/link'
 
-import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import {
+  SidebarGroup,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar'
 
 export function SidebarMain({
   items,
@@ -12,22 +16,17 @@ export function SidebarMain({
     title: string
     url: string
     icon?: any
-    isActive?: boolean
   }[]
 }) {
   return (
     <SidebarGroup>
-      <SidebarMenu>
+      <SidebarMenu className='gap-4'>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton tooltip={item.title}>
-              {item.icon && <item.icon />}
-              <Link href={item.url} className='flex items-center justify-between w-full'>
+              {item.icon && <item.icon weight='duotone' color='crimson' />}
+              <Link href={item.url}>
                 <span>{item.title}</span>
-                <CaretRight
-                  weight='duotone'
-                  className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90'
-                />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
