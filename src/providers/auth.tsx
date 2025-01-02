@@ -31,10 +31,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isFetchingDbUser, setIsFetchingDbUser] = useState(true)
   const router = useRouter()
 
+  const sessionUser = window.sessionStorage.getItem('USER')
+
   const fetchDbUser = async (authUserId: string) => {
+    if (sessionUser) return
+
     setIsFetchingDbUser(true)
 
-    const { data, error } = await supabase.from('users').select('*').eq('auth_id', authUserId).single()
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('auth_id', authUserId)
+      .single()
 
     if (error) {
       setIsFetchingDbUser(false)
@@ -43,11 +51,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (data) {
       setUser(data)
+      window.sessionStorage.setItem('USER', JSON.stringify(data))
       setIsFetchingDbUser(false)
     }
   }
 
   useEffect(() => {
+    // Only run initialization if there's no user
+    if (sessionUser) return
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -90,12 +102,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe()
     }
-  }, [router])
+  }, [router, user])
 
-  if ((isAuthenticating || isFetchingDbUser) && !user) return <Loader />
+  if ((isAuthenticating || isFetchingDbUser) && !sessionUser)
+    return <Loader message='checking authentication...' />
 
   return (
-    <AuthContext.Provider value={{ user, isLoading: isAuthenticating || isFetchingDbUser }}>
+    <AuthContext.Provider
+      value={{
+        user: sessionUser ? JSON.parse(sessionUser) : null,
+        isLoading: isAuthenticating || isFetchingDbUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
