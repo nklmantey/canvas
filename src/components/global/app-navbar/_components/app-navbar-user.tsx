@@ -15,6 +15,7 @@ import { CaretUpDown, CreditCard, Gear, PlusCircle, SignOut, Spinner } from '@ph
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { deleteCookie } from 'cookies-next'
 
 export function AppNavbarUser() {
   const { user } = useAuth()
@@ -31,7 +32,7 @@ export function AppNavbarUser() {
       if (error) throw error
 
       replace('/auth/login')
-      window.sessionStorage.removeItem('USER')
+      deleteCookie('USER')
     } catch (error) {
       console.error('Logout error:', error)
       toast.error('error logging out')

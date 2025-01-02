@@ -6,11 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  authWithOAuth,
-  loginUserWithMagicLink,
-  loginUserWithPassword,
-} from '@/lib/api'
+import { authWithOAuth, loginUserWithMagicLink, loginUserWithPassword } from '@/lib/api'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
@@ -51,28 +47,20 @@ export default function LoginForm() {
   })
 
   // PASSWORD LOGIN
-  const { mutate: handleLoginWithPassword, isPending: isLoggingIn } =
-    useMutation({
-      mutationFn: loginUserWithPassword.fn,
-      onSuccess: () => {
-        toast.success('logged in successfully!')
-        router.replace('/dashboard')
-      },
-      onError: (error) => {
-        console.log('ERROR', JSON.stringify(error, null, 2))
-        toast.error(
-          error instanceof Error
-            ? error.message.toLowerCase()
-            : 'failed to log in'
-        )
-      },
-    })
+  const { mutate: handleLoginWithPassword, isPending: isLoggingIn } = useMutation({
+    mutationFn: loginUserWithPassword.fn,
+    onSuccess: async () => {
+      await toast.success('logged in successfully!')
+      router.replace('/dashboard')
+    },
+    onError: (error) => {
+      console.log('ERROR', JSON.stringify(error, null, 2))
+      toast.error(error instanceof Error ? error.message.toLowerCase() : 'failed to log in')
+    },
+  })
 
   // MAGICLINK LOGIN
-  const {
-    mutate: handleLoginWithMagicLink,
-    isPending: isLoggingInWithMagicLink,
-  } = useMutation({
+  const { mutate: handleLoginWithMagicLink, isPending: isLoggingInWithMagicLink } = useMutation({
     mutationKey: loginUserWithMagicLink.key,
     mutationFn: loginUserWithMagicLink.fn,
     onSuccess: () => {
@@ -81,30 +69,21 @@ export default function LoginForm() {
       setCountdown(60)
     },
     onError: (error) => {
-      toast.error(
-        error instanceof Error
-          ? error.message.toLowerCase()
-          : 'failed to log in'
-      )
+      toast.error(error instanceof Error ? error.message.toLowerCase() : 'failed to log in')
     },
   })
 
   // OAUTH LOGIN
-  const { mutate: handleLoginWithOAuth, isPending: isLoggingInWithOAuth } =
-    useMutation({
-      mutationKey: authWithOAuth.key,
-      mutationFn: authWithOAuth.fn,
-      onSuccess: () => {
-        toast.success('logged in successfully!')
-      },
-      onError: (error) => {
-        toast.error(
-          error instanceof Error
-            ? error.message.toLowerCase()
-            : 'failed to authorize'
-        )
-      },
-    })
+  const { mutate: handleLoginWithOAuth, isPending: isLoggingInWithOAuth } = useMutation({
+    mutationKey: authWithOAuth.key,
+    mutationFn: authWithOAuth.fn,
+    onSuccess: () => {
+      toast.success('logged in successfully!')
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message.toLowerCase() : 'failed to authorize')
+    },
+  })
 
   async function onSubmitWithPassword(data: LoginInput) {
     try {
@@ -129,10 +108,7 @@ export default function LoginForm() {
         <TabsTrigger value='password'>password</TabsTrigger>
       </TabsList>
       <TabsContent value='magiclink'>
-        <form
-          onSubmit={handleSubmitWithMagicLink(onSubmitWithMagicLink)}
-          className='w-[400px]'
-        >
+        <form onSubmit={handleSubmitWithMagicLink(onSubmitWithMagicLink)} className='w-[400px]'>
           <div className='w-full mt-4 space-y-2'>
             <Input
               className='text-[#404040]'
@@ -170,10 +146,7 @@ export default function LoginForm() {
         </form>
       </TabsContent>
       <TabsContent value='password'>
-        <form
-          onSubmit={handleSubmitWithPassword(onSubmitWithPassword)}
-          className='w-[400px]'
-        >
+        <form onSubmit={handleSubmitWithPassword(onSubmitWithPassword)} className='w-[400px]'>
           <div className='w-full mt-4 space-y-2'>
             <Input
               placeholder='enter your email'
@@ -187,12 +160,7 @@ export default function LoginForm() {
               {...register('password')}
               error={errors.password?.message}
             />
-            <Button
-              size='lg'
-              className='w-full'
-              isLoading={isLoggingIn}
-              disabled={isLoggingIn}
-            >
+            <Button size='lg' className='w-full' isLoading={isLoggingIn} disabled={isLoggingIn}>
               log in
             </Button>
           </div>

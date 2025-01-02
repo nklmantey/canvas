@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Loader from '@/components/global/loader'
 import { useRouter } from 'next/navigation'
+import { getCookie, setCookie } from 'cookies-next'
 
 type DbUser = {
   email: string
@@ -31,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isFetchingDbUser, setIsFetchingDbUser] = useState(true)
   const router = useRouter()
 
-  const sessionUser = window.sessionStorage.getItem('USER')
+  const sessionUser = getCookie('USER')
 
   const fetchDbUser = async (authUserId: string) => {
     if (sessionUser) return
@@ -51,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (data) {
       setUser(data)
-      window.sessionStorage.setItem('USER', JSON.stringify(data))
+      setCookie('USER', JSON.stringify(data))
       setIsFetchingDbUser(false)
     }
   }
@@ -110,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        user: sessionUser ? JSON.parse(sessionUser) : null,
+        user: sessionUser ? JSON.parse(sessionUser as string) : null,
         isLoading: isAuthenticating || isFetchingDbUser,
       }}
     >
