@@ -7,7 +7,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
 } from '@/components/ui/sidebar'
+import { usePathname } from 'next/navigation'
+import { cn } from '@/utils'
 
 export function SidebarMain({
   items,
@@ -18,20 +21,28 @@ export function SidebarMain({
     icon?: any
   }[]
 }) {
+  const activePath = usePathname()
+
   return (
     <SidebarGroup>
       <SidebarMenu className='gap-4'>
         {items.map((item) => (
-          <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton tooltip={item.title}>
-              {item.icon && <item.icon weight='duotone' color='crimson' />}
-              <Link href={item.url}>
+          <SidebarMenuItem
+            key={item.title}
+            className={cn(
+              activePath === item.url && 'border border-sidebar-border rounded-md bg-gray-200'
+            )}
+          >
+            <Link href={item.url}>
+              <SidebarMenuButton tooltip={item.title}>
+                {item.icon && <item.icon weight='fill' color='gray' />}
                 <span>{item.title}</span>
-              </Link>
-            </SidebarMenuButton>
+              </SidebarMenuButton>
+            </Link>
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
+      <SidebarRail />
     </SidebarGroup>
   )
 }

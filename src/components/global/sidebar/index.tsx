@@ -9,7 +9,7 @@ const data = {
   navMain: [
     {
       title: 'home',
-      url: '/',
+      url: '/dashboard',
       icon: HouseLine,
     },
     {
