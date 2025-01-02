@@ -19,7 +19,7 @@ export default function DashboardLayout({
       <SidebarProvider>
         <AppSidebar />
         <div className='w-full h-full relative'>
-          <SidebarTrigger className='absolute top-20 left-2 z-50'>
+          <SidebarTrigger className='absolute top-16 left-2 z-50'>
             <SidebarSimple />
           </SidebarTrigger>
           <div>
